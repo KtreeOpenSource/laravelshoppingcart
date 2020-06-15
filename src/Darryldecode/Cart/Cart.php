@@ -144,7 +144,7 @@ class Cart
      * @return $this
      * @throws InvalidItemException
      */
-    public function add($id, $name = null, $price = null, $quantity = null, $attributes = array(), $conditions = array())
+    public function add($id, $name = null, $price = null, $quantity = null, $userId = null, $serviceCategory = null, $attributes = array(), $conditions = array())
     {
         // if the first argument is an array,
         // we will need to call add again
@@ -158,6 +158,8 @@ class Cart
                         $item['name'],
                         $item['price'],
                         $item['quantity'],
+                        $item['userId'],
+                        $item['serviceCategory'],
                         Helpers::issetAndHasValueOrAssignDefault($item['attributes'], array()),
                         Helpers::issetAndHasValueOrAssignDefault($item['conditions'], array())
                     );
@@ -168,6 +170,8 @@ class Cart
                     $id['name'],
                     $id['price'],
                     $id['quantity'],
+                    $item['userId'],
+                    $item['serviceCategory'],
                     Helpers::issetAndHasValueOrAssignDefault($id['attributes'], array()),
                     Helpers::issetAndHasValueOrAssignDefault($id['conditions'], array())
                 );
@@ -182,6 +186,8 @@ class Cart
             'name' => $name,
             'price' => Helpers::normalizePrice($price),
             'quantity' => $quantity,
+            'userId' => $userId,
+            'serviceCategory' => $serviceCategory,
             'attributes' => new ItemAttributeCollection($attributes),
             'conditions' => $conditions,
         ));
@@ -548,8 +554,8 @@ class Cart
         });
 
         return Helpers::formatValue(floatval($sum), $formatted, $this->config);
-    }    
-    
+    }
+
     /**
      * get cart sub total
      * @param bool $formatted
@@ -657,6 +663,8 @@ class Cart
             'price' => 'required|numeric',
             'quantity' => 'required|numeric|min:1',
             'name' => 'required',
+            'userId' => 'required|numeric',
+            'serviceCategory' => 'required|numeric'
         );
 
         $validator = CartItemValidator::make($item, $rules);
